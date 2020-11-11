@@ -1,7 +1,12 @@
+  
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+ activity-8
 import axios from  'axios';
+
+import axios from 'axios';
+ master
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Register from './components/Register/Register';
 import Login from './components/Login/Login';
@@ -19,6 +24,7 @@ class App extends React.Component {
         this.setState({
           data: response.data
         })
+ activity-8
       })
       .catch((error) => {
         console.error(`Error fetching data: ${error}`);
@@ -61,6 +67,13 @@ class App extends React.Component {
     this.setState({ user: null, token: null });
   }
 
+
+      })
+      .catch((error) => {
+        console.error(`Error fetching data: ${error}`);
+      })
+  }
+ master
   render() {
     let { user, data } = this.state;
     const authProps = {
@@ -73,22 +86,31 @@ class App extends React.Component {
             <h1>GoodThings</h1>
             <ul>
               <li>
+ activity-8
                 <Link to ="/">Home</Link>
+
+                <Link to="/">Home</Link>
+ master
               </li>
               <li>
                 <Link to="/register">Register</Link>
               </li>
               <li>
+ activity-8
                 {user ?
                 <Link to="" onClick={this.logOut}>Log out</Link> :
                 <Link to="/login">Login</Link>
                 }
 
+
+                <Link to="/login">Login</Link>
+master
               </li>
             </ul>
           </header>
           <main>
             <Route exact path="/">
+ activity-8
               {user ?
                 <React.Fragment>
                   <div>Hello {user}!</div>
@@ -107,6 +129,13 @@ class App extends React.Component {
               <Route 
               exact path ="/login" 
               render={() => <Login {...authProps} />} />
+
+              {this.state.data}
+            </Route>
+            <Switch>
+              <Route path="/register" component={Register} />
+              <Route path="/login" component={Login} />
+ master
             </Switch>
           </main>
         </div>
