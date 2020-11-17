@@ -7,6 +7,10 @@ import User from './models/User';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import auth from './middleware/auth';
+ activity-9
+import Post from './models/Post';
+
+ master
 
 // Initialize express application
 const app = express();
@@ -36,6 +40,43 @@ app.get('/api/auth', auth, async (req, res) => {
 });
 
 /**
+ activity-9
+ * @route GET api/posts
+ * @desc Get posts
+ */
+app.get('/api/posts', auth, async (req, res) => {
+    try {
+        const posts = await Post.find().sort({ date: -1 });
+
+        res.json(posts);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+});
+
+/**
+ * @route GET api/posts/:id
+ * @desc Get post
+ */
+app.get('/api/posts/:id', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found'});
+        }
+
+        res.json(post);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+});
+
+/**
+
+ master
  * @route POST api/login
  * @desc Login user
  */
@@ -86,7 +127,14 @@ app.get('/', (req, res) =>
 /**
  * @route POST api/users
  * @desc Register user
+
  */
+
+activity-9
+ 
+app.post('/api/users', 
+ 
+[  check('name', 'Please enter your name').not().isEmpty(),
 
 
 
@@ -95,6 +143,7 @@ app.post('/api/users',
 
         check('name', 'Please enter your name').not().isEmpty(),
      
+ master
         check('email', 'Please enter a valid email').isEmail(),
         check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
     ],
@@ -109,10 +158,17 @@ app.post('/api/users',
                 if (user) {
                     return res
                         .status(400)
+ activity-9
+                        .json({ errors: [{ msg: 'User already exists'}] });
+                }
+        
+                
+
        
                         .json({ errors: [{ msg: 'User already exists'}] });
                 }
 
+ master
                 user = new User({
     
     
@@ -120,7 +176,15 @@ app.post('/api/users',
                     name: name,
                     email: email,
                     password: password
-                    
+activity-9
+                });
+
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(password, salt);
+                
+                await user.save();
+
+                   
                 });
 
 
@@ -128,6 +192,7 @@ app.post('/api/users',
                 user.password = await bcrypt.hash(password, salt);
                 
               await user.save();
+ master
 
                 returnToken(user, res);
             } catch (error) {
@@ -136,6 +201,103 @@ app.post('/api/users',
         }
     }
 );
+ activity-9
+/**
+ * @route POST api/posts
+ * @desc Create post
+ */
+app.post(
+    '/api/posts',
+    [
+        auth,
+        [
+            check('title', 'Title text is required')
+                .not()
+                .isEmpty(),
+            check('body', 'Body text is required')
+                .not()
+                .isEmpty(),
+        ]
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            res.status(400).json({errors: errors.array() });
+        } else {
+            const { title, body } = req.body;
+            try {
+                const user = await User.findById(req.user.id);
+
+                const post = new Post({
+                    user: user.id,
+                    title: title,
+                    body: body
+                });
+
+                await post.save();
+
+                res.json(post);
+            } catch (error) {
+                console.error(error);
+                res.status(500).send('Server error');
+            }
+        }
+    }
+);
+
+/**
+ * @route DELETE api/posts/:id
+ * @desc Delete a post
+ */
+app.delete('/api/posts/:id', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found'});
+        }
+
+        if (post.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized'});
+        }
+
+        await post.remove();
+
+        res.json({ msg: 'Post removed' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+});
+
+/**
+ * @route PUT api/posts/:id
+ * @desc Update a post
+ */
+app.put('/api/posts/:id', auth, async (req, res) => {
+    try {
+        const { title, body } = req.body;
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found'});
+        }
+
+        if (post.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized'});
+        }
+
+        post.title = title || post.title;
+        post.body = body || post.body;
+
+        await post.save();
+
+        res.json(post);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+});
 const returnToken = (user, res) => {
     const payload = {
         user: {
@@ -143,6 +305,15 @@ const returnToken = (user, res) => {
         }
     }
 
+
+const returnToken = (user, res) => {
+    const payload = {
+        user: {
+            id: user.id
+        }
+    }
+
+ master
     jwt.sign(
         payload,
         config.get('jwtSecret'),
