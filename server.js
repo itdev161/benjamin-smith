@@ -7,7 +7,10 @@ import User from './models/User';
 import jwt from 'jsonwebtoken';
 import config from 'config';
 import auth from './middleware/auth';
+ activity-9
 import Post from './models/Post';
+
+ master
 
 // Initialize express application
 const app = express();
@@ -37,6 +40,7 @@ app.get('/api/auth', auth, async (req, res) => {
 });
 
 /**
+ activity-9
  * @route GET api/posts
  * @desc Get posts
  */
@@ -71,6 +75,8 @@ app.get('/api/posts/:id', auth, async (req, res) => {
 });
 
 /**
+
+ master
  * @route POST api/login
  * @desc Login user
  */
@@ -124,10 +130,20 @@ app.get('/', (req, res) =>
 
  */
 
+activity-9
  
 app.post('/api/users', 
  
 [  check('name', 'Please enter your name').not().isEmpty(),
+
+
+
+app.post('/api/users', 
+    [
+
+        check('name', 'Please enter your name').not().isEmpty(),
+     
+ master
         check('email', 'Please enter a valid email').isEmail(),
         check('password', 'Please enter a password with 6 or more characters').isLength({ min: 6 })
     ],
@@ -142,20 +158,41 @@ app.post('/api/users',
                 if (user) {
                     return res
                         .status(400)
+ activity-9
                         .json({ errors: [{ msg: 'User already exists'}] });
                 }
         
                 
+
+       
+                        .json({ errors: [{ msg: 'User already exists'}] });
+                }
+
+ master
                 user = new User({
+    
+    
+
                     name: name,
                     email: email,
                     password: password
+activity-9
                 });
 
                 const salt = await bcrypt.genSalt(10);
                 user.password = await bcrypt.hash(password, salt);
                 
                 await user.save();
+
+                   
+                });
+
+
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(password, salt);
+                
+              await user.save();
+ master
 
                 returnToken(user, res);
             } catch (error) {
@@ -164,6 +201,7 @@ app.post('/api/users',
         }
     }
 );
+ activity-9
 /**
  * @route POST api/posts
  * @desc Create post
@@ -267,6 +305,15 @@ const returnToken = (user, res) => {
         }
     }
 
+
+const returnToken = (user, res) => {
+    const payload = {
+        user: {
+            id: user.id
+        }
+    }
+
+ master
     jwt.sign(
         payload,
         config.get('jwtSecret'),
