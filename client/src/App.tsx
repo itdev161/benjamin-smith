@@ -1,6 +1,12 @@
+  
 import React from 'react';
+import logo from './logo.svg';
 import './App.css';
+ activity-8
+import axios from  'axios';
+
 import axios from 'axios';
+ activity-10
 import {BrowserRouter as Router, Switch, Route, Link} from 'react-router-dom';
 import Register from './components/Register/Register';
 import Login from './components/Login/Login';
@@ -21,16 +27,31 @@ class App extends React.Component {
     this.authenticateUser();
   }
 
+ activity-9
+
+ master
+ master
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import Register from './components/Register/Register';
+import Login from './components/Login/Login';
+
+class App extends React.Component {
+  state = {
+    data: null,
+    token: null,
+    user: null
+ activity-9
+  }
 
   authenticateUser = () => {
     const token = localStorage.getItem('token');
 
-    if(!token){
-      localStorage.removeItem('user');
-      this.setState({user: null});
+    if (!token) {
+      localStorage.removeItem('user')
+      this.setState({ user: null });
     }
 
-    if(token){
+    if (token) {
       const config = {
         headers: {
           'x-auth-token': token
@@ -38,6 +59,76 @@ class App extends React.Component {
       }
       axios.get('http://localhost:5000/api/auth', config)
         .then((response) => {
+          localStorage.setItem('user', response.data.name);
+          this.setState({ user: response.data.name });
+        })
+        .catch((error) => {
+          localStorage.removeItem('user');
+          this.setState({ user: null });
+          console.log(`Error logging in: ${error}`);
+        })
+    }
+  }
+
+  logOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.setState({ user: null, token: null });
+
+ master
+  }
+
+  componentDidMount() {
+    axios.get('http://localhost:5000')
+      .then((response) => {
+        this.setState({
+          data: response.data
+        })
+ activity-9
+
+ activity-8
+ master
+      })
+      .catch((error) => {
+        console.error(`Error fetching data: ${error}`);
+      })
+
+      this.authenticateUser();
+  }
+ activity-9
+  render() {
+    let { user, data } = this.state;
+    const authProps = {
+      authenticateUser: this.authenticateUser,
+ master
+
+
+  authenticateUser = () => {
+    const token = localStorage.getItem('token');
+
+ activity-10
+    if(!token){
+      localStorage.removeItem('user');
+      this.setState({user: null});
+    }
+
+    if(token){
+
+    if(!token) {
+      localStorage.removeItem('user')
+      this.setState({ user: null });
+    }
+
+    if(token) {
+ master
+      const config = {
+        headers: {
+          'x-auth-token': token
+        }
+      }
+      axios.get('http://localhost:5000/api/auth', config)
+        .then((response) => {
+ activity-10
           localStorage.setItem('user', response.data.name);
           this.setState({
             user: response.data.name,
@@ -49,11 +140,20 @@ class App extends React.Component {
         .catch((error) => {
           localStorage.removeItem('user');
           this.setState({user: null});
+
+          localStorage.setItem('user', response.data.name)
+          this.setState({ user: response.data.name })
+        })
+        .catch((error) => {
+          localStorage.removeItem('user');
+          this.setState({ user: null });
+ master
           console.error(`Error logging in: ${error}`);
         })
     }
   }
 
+ activity-10
   loadData = () => {
     const {token} = this.state;
 
@@ -145,6 +245,26 @@ class App extends React.Component {
     let {user, posts, post, token} = this.state;
     const authProps = {
       authenticateUser: this.authenticateUser
+
+  logOut = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.setState({ user: null, token: null });
+  }
+
+
+      })
+      .catch((error) => {
+        console.error(`Error fetching data: ${error}`);
+      })
+  }
+ master
+  render() {
+    let { user, data } = this.state;
+    const authProps = {
+    authenticateUser: this.authenticateUser
+ master
+ master
     }
     return (
       <Router>
@@ -153,6 +273,7 @@ class App extends React.Component {
             <h1>GoodThings</h1>
             <ul>
               <li>
+ activity-10
                 <Link to="/">Home</Link>
               </li>
               <li>
@@ -166,10 +287,43 @@ class App extends React.Component {
                   <Link to="" onClick={this.logOut}>Log out</Link> :
                   <Link to="/login">Log in</Link>
                 } 
+
+activity-9
+                <Link to="/">Home</Link>
+
+ activity-8
+                <Link to ="/">Home</Link>
+
+                <Link to="/">Home</Link>
+ master
+ master
+              </li>
+              <li>
+                <Link to="/register">Register</Link>
+              </li>
+              <li>
+activity-9
+                {user ?
+                  <Link to="" onClick={this.logOut}>Log out</Link> :
+                  <Link to="/login">Log in</Link>
+                }
+
+ activity-8
+                {user ?
+                <Link to="" onClick={this.logOut}>Log out</Link> :
+                <Link to="/login">Login</Link>
+                }
+
+
+                <Link to="/login">Login</Link>
+master
+master
+ master
               </li>
             </ul>
           </header>
           <main>
+ activity-10
             <Switch>
               <Route exact path="/">
                 {user ?
@@ -208,6 +362,46 @@ class App extends React.Component {
                   exact path="/login"
                   render={() => <Login {...authProps} />} 
               />
+
+ activity-9
+
+ activity-8
+ master
+              {user ?
+                <React.Fragment>
+                  <div>Hello {user}!</div>
+                  <div>{data}</div>
+                </React.Fragment> :
+                <React.Fragment>
+                  Please Register or Login
+                </React.Fragment>
+              }
+
+            </Route>
+            <Switch>
+ activity-9
+              <Route 
+                exact path="/register" 
+                render={() => <Register {...authProps} />} />
+              <Route 
+                exact path="/login" 
+                render={() => <Login {...authProps} />} />
+
+              <Route
+                exact path="/register" 
+                render={() => <Register {...authProps} />} />
+              <Route 
+              exact path ="/login" 
+              render={() => <Login {...authProps} />} />
+
+              {this.state.data}
+            </Route>
+            <Switch>
+              <Route path="/register" component={Register} />
+              <Route path="/login" component={Login} />
+ master
+ master
+ master
             </Switch>
           </main>
         </div>
